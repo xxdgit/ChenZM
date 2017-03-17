@@ -14,7 +14,7 @@ public class LoginRequest {
 
     public static String loginRequest(String account,String password){
         //拼装路径
-        String path = "/PATH" + "account=" + account + "&password=" + password;
+        String path = "http://10.0.85.233/index.php/Admin/Index/test_android_get?account=" + account + "&password=" + password;
         HttpURLConnection connection=null;
         try{
             URL url=new URL(path);
@@ -32,7 +32,7 @@ public class LoginRequest {
                     response.append(line);
                 }
 
-                return response.toString();
+                return response.toString().trim();
 
             }else{
                 return null;

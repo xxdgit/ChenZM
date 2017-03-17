@@ -12,7 +12,7 @@ import java.net.URL;
  */
 
 public class RegisterRequest {
-    public static String registerRequest(String account,String password,String email,String problem,String answer){
+    public static String registerRequest(String account,String password,String problem,String answer){
         //拼装路径
         String path="/PATH";
         HttpURLConnection connection=null;
@@ -22,7 +22,7 @@ public class RegisterRequest {
             connection.setRequestMethod("POST");
             connection.setConnectTimeout(5000);
 
-            String data = "account=" + account + "&password=" + password + "&email=" + email + "&problem=" + problem + "&answer=" + answer;
+            String data = "account=" + account + "&password=" + password + "&problem=" + problem + "&answer=" + answer;
 
             connection.setDoOutput(true);
             OutputStream out=connection.getOutputStream();

@@ -11,7 +11,12 @@
     tools:context="com.xm.login.MainActivity">
 
     <TextView
+        android:id="@+id/text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="主界面" />
+    <TextView
+        android:layout_below="@id/text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

@@ -3,12 +3,16 @@ package com.xm.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.xm.requestService.RegisterRequest;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * Created by j on 2017/3/15.
@@ -18,14 +22,12 @@ public class Register extends Activity {
 
     private String account;
     private String password;
-    private String email;
     private String problem;
     private String answer;
 
     private EditText et_account;
     private EditText et_password;
     private EditText et_ensure_password;
-    private EditText et_email;
     private EditText et_problem;
     private EditText et_answer;
     private Button bt_register;
@@ -43,7 +45,6 @@ public class Register extends Activity {
                 final int isRegisterInfoOk=isRegisterInfoOk();
                 account=getAccount();
                 password=getPassword();
-                email=getEmail();
                 problem=getProblem();
                 answer=getAnswer();
 
@@ -51,15 +52,28 @@ public class Register extends Activity {
                     @Override
                     public void run() {
                         if(isRegisterInfoOk == -1){
-                            Toast.makeText(Register.this,"请将信息填写完整",Toast.LENGTH_LONG);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(Register.this,"请将信息填写完整",Toast.LENGTH_LONG);
+                                }
+                            });
+
                         }else if(isRegisterInfoOk == 0){
-                            Toast.makeText(Register.this,"确认密码错误",Toast.LENGTH_LONG);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(Register.this,"两次密码不一致",Toast.LENGTH_LONG);
+                                }
+                            });
+
                         }else{
-                            String response= RegisterRequest.registerRequest(account,password,email,problem,answer);
-                            if(response==""){      //与获取服务器返回的内容一样，执行
+                            String response= RegisterRequest.registerRequest(account,password,problem,answer);
+                            if(response == "success"){      //与获取服务器返回的内容一样，执行
                                 Toast.makeText(Register.this,"已注册，即将返回登录界面",Toast.LENGTH_LONG);
                                 Intent intent=new Intent(Register.this,Login.class);
                                 startActivity(intent);
+                                finish();
                             }
                             else{
                                 Toast.makeText(Register.this,response,Toast.LENGTH_LONG);
@@ -75,8 +89,10 @@ public class Register extends Activity {
             public void onClick(View v) {
                 Intent intent=new Intent(Register.this,Login.class);
                 startActivity(intent);
+                finish();
             }
         });
+
 
     }
 
@@ -84,10 +100,9 @@ public class Register extends Activity {
         String account=getAccount();
         String password=getPassword();
         String ensure_password=getEnsure_password();
-        String email=getEmail();
         String problem=getProblem();
         String answer=getAnswer();
-        if(account == null || password == null || ensure_password == null || email == null || problem == null || answer == null){
+        if(account == null || password == null || ensure_password == null || problem == null || answer == null){
             return -1;
         }else if((password != null || ensure_password != null) && password != ensure_password){
             return 0;
@@ -99,37 +114,46 @@ public class Register extends Activity {
 
     public String getAccount(){
         et_account=(EditText)findViewById(R.id.et_register_account);
-        String account=et_account.getText().toString();
-        return  account;
+        String base64_account=et_account.getText().toString();
+        base64_account=base64(base64_account);
+        return  base64_account;
     }
 
     public String getPassword(){
         et_password=(EditText)findViewById(R.id.et_register_account);
-        String password=et_password.getText().toString();
-        return  password;
+        String base64_password=et_password.getText().toString();
+        base64_password=base64(base64_password);
+        return  base64_password;
     }
 
     public String getEnsure_password(){
         et_ensure_password=(EditText)findViewById(R.id.et_ensure_password);
-        String ensure_password=et_ensure_password.getText().toString();
-        return ensure_password;
-    }
-
-    public String getEmail(){
-        et_email=(EditText)findViewById(R.id.et_email);
-        String email=et_email.getText().toString();
-        return email;
+        String base64_ensure_password=et_ensure_password.getText().toString();
+        base64_ensure_password=base64(base64_ensure_password);
+        return base64_ensure_password;
     }
 
     public String getProblem(){
         et_problem=(EditText)findViewById(R.id.et_problem);
-        String problem=et_problem.getText().toString();
-        return problem;
+        String base64_problem=et_problem.getText().toString();
+        base64_problem=base64(base64_problem);
+        return base64_problem;
     }
 
     public String getAnswer(){
         et_answer=(EditText)findViewById(R.id.et_answer);
-        String answer=et_answer.getText().toString();
-        return answer;
+        String base64_answer=et_answer.getText().toString();
+        base64_answer=base64(base64_answer);
+        return base64_answer;
+    }
+
+    public String base64(String content) {
+        try {
+            content = Base64.encodeToString(content.getBytes("utf-8"), Base64.DEFAULT);
+            content = URLEncoder.encode(content);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return content;
     }
 }
